@@ -14,4 +14,5 @@ type Incident struct {
 	Address string `json:"address"`
 	Remarks string `json:"remarks"`
 	DateCreated time.Time `json:"date_created"`
+	ReportId string `json:"report_id"`
 }
