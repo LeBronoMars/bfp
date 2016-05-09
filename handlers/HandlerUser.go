@@ -87,6 +87,50 @@ func (handler UserHandler) Create(c *gin.Context) {
 	}
 }
 
+//user authentication
+func (handler UserHandler) Auth(c *gin.Context) {
+	if IsTokenValid(c) {
+		username := c.PostForm("username")
+		password := c.PostForm("password")
+
+		if (strings.TrimSpace(username) == "") {
+			respond(http.StatusBadRequest,"Please supply the user's username",c,true)
+		} else if (strings.TrimSpace(password) == "") {
+			respond(http.StatusBadRequest,"Please supply the user's password",c,true)
+		} else {
+			//check if username already existing
+			user := m.User{}	
+			handler.db.Table("users").Where("username = ?",username).Find(&user)
+
+			if user.Username == "" {
+				respond(http.StatusBadRequest,"Account not found!",c,true)
+			} else {
+				decryptedPassword := decrypt([]byte(config.GetString("CRYPT_KEY")), user.Password)
+				//invalid password
+				if decryptedPassword != password {
+					respond(http.StatusBadRequest,"Account not found!",c,true)
+				} else {
+					//authentication successful
+					authenticatedUser := m.AuthenticatedUser{}
+					authenticatedUser.Id = user.Id
+					authenticatedUser.FirstName = user.FirstName
+					authenticatedUser.LastName = user.LastName
+					authenticatedUser.Status = user.Status
+					authenticatedUser.Userrole = user.Userrole
+					authenticatedUser.Userlevel = user.Userlevel
+					authenticatedUser.Username = user.Username
+					authenticatedUser.DateCreated = user.DateCreated
+					authenticatedUser.DateUpdated = user.DateUpdated
+					authenticatedUser.Token = generateJWT(username)
+					c.JSON(http.StatusOK, authenticatedUser)
+				}					
+			}
+		}
+	} else {
+		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
+	}
+}
+
 //generate JWT
 func generateJWT(username string) string {
 	// Create the token
