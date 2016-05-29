@@ -17,12 +17,21 @@ func NewIncidentHandler(db *gorm.DB) *IncidentHandler {
 }
 
 //get all incident
-func (handler IncidentHandler) Index(c *gin.Context) {
+func (handler IncidentHandler) Show(c *gin.Context) {
 	if IsTokenValid(c) {
-		incidents := []m.MemberIncident{}
-		status := c.Query("status")
-		handler.db.Table("qry_member_incident").Where("incident_status = ?",status).Order("incident_report_id desc").Find(&incidents)
-		c.JSON(http.StatusOK, &incidents)
+		incident_id := c.Param("incident_id")
+		qryIncident := m.FetchIncidents{}
+		incident := m.Incident{}
+		query := handler.db.Where("id = ?",incident_id).First(&incident)
+		if query.RowsAffected > 0 {
+			statuses := []m.QryIncidents{}
+			handler.db.Where("incident_id = ?",incident_id).Find(&statuses)
+			qryIncident.Incident = incident
+			qryIncident.Status = statuses
+			c.JSON(http.StatusOK,qryIncident)
+		} else {
+			respond(http.StatusBadRequest,"Unable to find incident record!",c,true)
+		}
 	} else {
 		respond(http.StatusUnauthorized,"Sorry, but your session has expired!",c,true)	
 	}

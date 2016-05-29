@@ -31,3 +31,20 @@ func (handler FireStatusHandler) Create(c *gin.Context) {
 	}
 	return
 }
+
+func (handler FireStatusHandler) Update(c *gin.Context) {
+	if IsTokenValid(c) {
+		fireStatus := m.FireStatus{}
+		handler.db.Where("id = ?",c.Param("id")).First(&fireStatus)
+		fireStatus.Status = c.PostForm("status")
+		save := handler.db.Save(&fireStatus)
+		if save.RowsAffected > 0 {
+			c.JSON(http.StatusOK,&fireStatus)
+		} else {
+			respond(http.StatusBadRequest,save.Error.Error(),c,true)
+		}
+	} else {
+		respond(http.StatusUnauthorized,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}
