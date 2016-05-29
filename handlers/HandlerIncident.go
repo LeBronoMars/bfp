@@ -24,19 +24,24 @@ func (handler IncidentHandler) Index(c *gin.Context) {
 		handler.db.Table("qry_member_incident").Where("incident_status = ?",status).Order("incident_report_id desc").Find(&incidents)
 		c.JSON(http.StatusOK, &incidents)
 	} else {
-		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
+		respond(http.StatusUnauthorized,"Sorry, but your session has expired!",c,true)	
 	}
+	return
 }
 
 func (handler IncidentHandler) Create(c *gin.Context) {
-	var newIncident	m.Incident
-	c.Bind(&newIncident)
-	
-	result := handler.db.Create(&newIncident)
-	if result.RowsAffected > 0 {
-		c.JSON(http.StatusCreated,newIncident)
+	if IsTokenValid(c) {
+		var newIncident	m.Incident
+		c.Bind(&newIncident)
+		
+		result := handler.db.Create(&newIncident)
+		if result.RowsAffected > 0 {
+			c.JSON(http.StatusCreated,newIncident)
+		} else {
+			respond(http.StatusBadRequest,result.Error.Error(),c,true)
+		}
 	} else {
-		respond(http.StatusBadRequest,result.Error.Error(),c,true)
+		respond(http.StatusUnauthorized,"Sorry, but your session has expired!",c,true)	
 	}
 	return
 }
