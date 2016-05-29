@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	h "bfp/avi/api/handlers"
+	m "bfp/avi/api/models"
 	"bfp/avi/api/config"
 	"github.com/jinzhu/gorm"
 	"github.com/gin-gonic/contrib/jwt"
@@ -56,7 +57,7 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	_db.LogMode(true)
-	//_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.Category{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.Incident{},&m.FireStatus{})
 	_db.Set("gorm:table_options", "ENGINE=InnoDB")
 	return _db
 }
