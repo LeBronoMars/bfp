@@ -81,7 +81,7 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 		qryIncident.Incident = incident
 		qryIncident.Status = statuses
 		c.JSON(http.StatusCreated,qryIncident)
-		cc.AbortWithStatus(http.StatusCreated)
+		c.AbortWithStatus(http.StatusCreated)
 		return
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
