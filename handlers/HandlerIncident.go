@@ -83,16 +83,19 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 				qryIncident.Incident = incident
 				qryIncident.Status = statuses
 				c.JSON(http.StatusOK,qryIncident)
+				return
 			} else {
 				respond(http.StatusBadRequest,fireStatusResult.Error.Error(),c,true)
+				return
 			}
 		} else {
 			respond(http.StatusBadRequest,result.Error.Error(),c,true)
+			return
 		}
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+		return
 	}
-	return
 }
 
 
