@@ -82,11 +82,11 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 				handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
 				qryIncident.Incident = incident
 				qryIncident.Status = statuses
-				c.String(http.StatusCreated,"Created")
 				c.JSON(http.StatusCreated,qryIncident)
 			} else {
 				respond(http.StatusBadRequest,fireStatusResult.Error.Error(),c,true)
 			}
+			return
 		} else {
 			respond(http.StatusBadRequest,result.Error.Error(),c,true)
 		}
