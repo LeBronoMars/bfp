@@ -73,10 +73,10 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 		fireStatus.ReportedBy = reported_by
 
 		handler.db.Create(&fireStatus)
+		c.String(http.StatusCreated,"Created")
 		qryIncident := m.FetchIncidents{}
 		incident := m.Incident{}
 		handler.db.Where("id = ?",incident_id).First(&incident)
-		c.String(http.StatusCreated,"Created")
 		statuses := []m.QryIncidents{}
 		handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
 		qryIncident.Incident = incident
