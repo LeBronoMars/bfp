@@ -22,7 +22,9 @@ func (handler FireStatusHandler) Create(c *gin.Context) {
 		c.Bind(&newFireStatus)
 		result := handler.db.Create(&newFireStatus)
 		if result.RowsAffected > 0 {
-			c.JSON(http.StatusCreated,newFireStatus)
+			status := m.QryIncidents{}
+			handler.db.Where("fire_status_id = ?",newFireStatus.Id).First(&status)
+			c.JSON(http.StatusCreated,status)
 		} else {
 			respond(http.StatusBadRequest,result.Error.Error(),c,true)
 		}
