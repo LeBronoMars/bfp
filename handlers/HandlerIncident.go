@@ -72,20 +72,14 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 			fireStatus.Status = alarm_level
 			fireStatus.ReportedBy = reported_by
 
-			fireStatusResult := handler.db.Create(&fireStatus)
-
-			if fireStatusResult.RowsAffected > 0 {
-				qryIncident := m.FetchIncidents{}
-				incident := m.Incident{}
-				handler.db.Where("id = ?",incident_id).First(&incident)
-				statuses := []m.QryIncidents{}
-				handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
-				qryIncident.Incident = incident
-				qryIncident.Status = statuses
-				c.JSON(http.StatusCreated,qryIncident)
-			} else {
-				respond(http.StatusBadRequest,fireStatusResult.Error.Error(),c,true)
-			}
+			handler.db.Create(&fireStatus)qryIncident := m.FetchIncidents{}
+			incident := m.Incident{}
+			handler.db.Where("id = ?",incident_id).First(&incident)
+			statuses := []m.QryIncidents{}
+			handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
+			qryIncident.Incident = incident
+			qryIncident.Status = statuses
+			c.JSON(http.StatusCreated,qryIncident)
 			return
 		} else {
 			respond(http.StatusBadRequest,result.Error.Error(),c,true)
