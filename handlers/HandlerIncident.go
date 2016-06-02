@@ -72,7 +72,8 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 			fireStatus.Status = alarm_level
 			fireStatus.ReportedBy = reported_by
 
-			handler.db.Create(&fireStatus)qryIncident := m.FetchIncidents{}
+			handler.db.Create(&fireStatus)
+			qryIncident := m.FetchIncidents{}
 			incident := m.Incident{}
 			handler.db.Where("id = ?",incident_id).First(&incident)
 			statuses := []m.QryIncidents{}
