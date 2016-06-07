@@ -64,7 +64,6 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 		reported_by,_ := strconv.Atoi(c.PostForm("reported_by"))
 
 		handler.db.Create(&newIncident)
-		c.String(http.StatusCreated,"Created")
 		incident_id := newIncident.Id
 		//create the very first fire status of incident
 		fireStatus := m.FireStatus{}
@@ -73,7 +72,6 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 		fireStatus.ReportedBy = reported_by
 
 		handler.db.Create(&fireStatus)
-		c.String(http.StatusCreated,"Created")
 		qryIncident := m.FetchIncidents{}
 		incident := m.Incident{}
 		handler.db.Where("id = ?",incident_id).First(&incident)
