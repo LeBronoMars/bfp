@@ -51,9 +51,9 @@ func generateJWT(username string) string {
 }
 
 //change timezone of date
-func changeTimeZone() time.Time {
+func changeTimeZone(t time.Time) time.Time {
 	loc,_ := time.LoadLocation("Asia/Manila")
-	newTime,_ := time.ParseInLocation(time.RFC3339,time.Now().Format(time.RFC3339),loc)
+	newTime,_ := time.ParseInLocation(time.RFC3339,t.Format(time.RFC3339),loc)
 	return newTime
 }
 
