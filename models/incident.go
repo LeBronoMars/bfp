@@ -13,14 +13,14 @@ type Incident struct {
 	Remarks string `json:"remarks" form:"remarks" binding:"required"`
 }
 
-func (i *Incident) BeforeCreate() (err error) {
+func (i *Incident) AfterSave() (err error) {
 	fmt.Printf("\nBEFORE PARSE --> %v",i.CreatedAt.Format(time.RFC3339))
 	loc,_ := time.LoadLocation("Asia/Manila")
 	newCreatedAt,err1 := time.ParseInLocation(time.RFC3339,i.CreatedAt.Format(time.RFC3339),loc)
 	newUpdatedAt,err2 := time.ParseInLocation(time.RFC3339,i.UpdatedAt.Format(time.RFC3339),loc)
 
-	fmt.Printf("\nAFTER PARSE ---> %v\n\n",newCreatedAt)
 	if err1 == nil && err2 == nil {
+		fmt.Printf("\nAFTER PARSE FIRE STATUS ---> %v\n\n",newCreatedAt)
 		i.CreatedAt = newCreatedAt
 		i.UpdatedAt = newUpdatedAt
 	} else {
