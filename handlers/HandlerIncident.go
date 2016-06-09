@@ -76,10 +76,14 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 		incident := m.Incident{}
 		handler.db.Where("id = ?",incident_id).First(&incident)
 		statuses := []m.QryIncidents{}
-		handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
-		qryIncident.Incident = incident
-		qryIncident.Status = statuses
-		c.JSON(http.StatusCreated,qryIncident)
+		query := handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
+		if query.RowsAffected > 0 {
+			qryIncident.Incident = incident
+			qryIncident.Status = statuses
+			c.JSON(http.StatusCreated,qryIncident)
+		} else {
+			respond(http.StatusForbidden,query.Error.Error(),c,true)
+		}
 		return
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
