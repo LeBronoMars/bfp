@@ -83,8 +83,8 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 		return
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
+		return
 	}
-	return
 }
 
 

@@ -19,9 +19,6 @@ import (
 func respond(statusCode int, responseMessage string, c *gin.Context, isError bool) {
 	response := &Response{Message: responseMessage}
 	c.JSON(statusCode,response)
-	if isError {
-		c.AbortWithStatus(statusCode)		
-	}
 }
 
 func jwtVerifier() gin.HandlerFunc {
