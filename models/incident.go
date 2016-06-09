@@ -16,12 +16,16 @@ type Incident struct {
 
 func (i *Incident) AfterCreate(tx *gorm.DB) (err error) {
 	loc,_ := time.LoadLocation("Asia/Manila")
+	fmt.Printf("\n\nBEFORE CREATE --> %v\n",i.CreatedAt.Format(time.RFC3339))
 	newCreatedAt,err1 := time.ParseInLocation(time.RFC3339,i.CreatedAt.Format(time.RFC3339),loc)
 	newUpdatedAt,err2 := time.ParseInLocation(time.RFC3339,i.UpdatedAt.Format(time.RFC3339),loc)
+	fmt.Printf("\n\nAFTER CREATE ---> %v\n",newCreatedAt)
 	if err1 == nil && err2 == nil {
     	res1 := tx.Model(i).Update("CreatedAt", newCreatedAt)
     	res2 := tx.Model(i).Update("UpdatedAt", newUpdatedAt)
     	if res1 == nil && res2 == nil {
+    		fmt.Printf("\n\nSAVED!")
+    	}  else {
     		fmt.Printf("\n ERROR IN PARSING DATE ---> %v\n\n",res1.Error.Error())
     	}
 	} else {
