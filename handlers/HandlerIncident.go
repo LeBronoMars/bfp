@@ -59,11 +59,13 @@ func (handler IncidentHandler) Index(c *gin.Context) {
 func (handler IncidentHandler) Create(c *gin.Context) {
 	if IsTokenValid(c) {
 		var newIncident	m.Incident
-		c.Bind(&newIncident)
-
-		handler.db.Create(&newIncident)
-		c.JSON(http.StatusCreated,newIncident)
-		
+		err := c.Bind(&newIncident)
+		if err == nil {
+			handler.db.Create(&newIncident)
+			c.JSON(http.StatusCreated,newIncident)
+		} else {
+			respond(http.StatusCreated,err.Error(),c,true)
+		}
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
 		return
