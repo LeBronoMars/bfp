@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
+	//"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -60,31 +60,10 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 	if IsTokenValid(c) {
 		var newIncident	m.Incident
 		c.Bind(&newIncident)
-		alarm_level := c.PostForm("alarm_level")
-		reported_by,_ := strconv.Atoi(c.PostForm("reported_by"))
 
 		handler.db.Create(&newIncident)
-		incident_id := newIncident.Id
-		//create the very first fire status of incident
-		fireStatus := m.FireStatus{}
-		fireStatus.IncidentId = incident_id
-		fireStatus.Status = alarm_level
-		fireStatus.ReportedBy = reported_by
-
-		handler.db.Create(&fireStatus)
-		qryIncident := m.FetchIncidents{}
-		incident := m.Incident{}
-		handler.db.Where("id = ?",incident_id).First(&incident)
-		statuses := []m.QryIncidents{}
-		query := handler.db.Where("incident_id = ?",incident_id).Order("fire_status_id desc").Find(&statuses)
-		if query.RowsAffected > 0 {
-			qryIncident.Incident = incident
-			qryIncident.Status = statuses
-			c.JSON(http.StatusCreated,qryIncident)
-		} else {
-			respond(http.StatusForbidden,query.Error.Error(),c,true)
-		}
-		return
+		c.JSON(http.StatusCreated,newIncident)
+		
 	} else {
 		respond(http.StatusForbidden,"Sorry, but your session has expired!",c,true)	
 		return
