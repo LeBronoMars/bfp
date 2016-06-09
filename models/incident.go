@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -15,9 +16,16 @@ type Incident struct {
 
 func (i *Incident) AfterCreate(tx *gorm.DB) (err error) {
 	loc,_ := time.LoadLocation("Asia/Manila")
-	newCreatedAt,_ := time.ParseInLocation(time.RFC3339,i.CreatedAt.Format(time.RFC3339),loc)
-	newUpdatedAt,_ := time.ParseInLocation(time.RFC3339,i.UpdatedAt.Format(time.RFC3339),loc)
-    tx.Model(i).Update("CreatedAt", newCreatedAt)
-    tx.Model(i).Update("UpdatedAt", newUpdatedAt)
+	newCreatedAt,err1 := time.ParseInLocation(time.RFC3339,i.CreatedAt.Format(time.RFC3339),loc)
+	newUpdatedAt,err2 := time.ParseInLocation(time.RFC3339,i.UpdatedAt.Format(time.RFC3339),loc)
+	if err1 == nil && err2 == nil {
+    	res1 := tx.Model(i).Update("CreatedAt", newCreatedAt)
+    	res2 := tx.Model(i).Update("UpdatedAt", newUpdatedAt)
+    	if res1 == nil && res2 == nil {
+    		fmt.Printf("\n ERROR IN PARSING DATE ---> %v\n\n",res1.Error.Error())
+    	}
+	} else {
+		fmt.Printf("\n ERROR IN PARSING DATE ---> %v\n\n",err1,err2)
+	}
     return
 }
