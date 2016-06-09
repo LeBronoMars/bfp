@@ -25,12 +25,13 @@ func (i *Incident) AfterCreate(tx *gorm.DB) (err error) {
 				fmt.Printf("\n\nTX IS NULL!")
 			} else {
 				fmt.Printf("\n\nTX NOT NULL!")
-				res1 := tx.Model(&i).Update("CreatedAt", newCreatedAt)
-		    	res2 := tx.Model(&i).Update("UpdatedAt", newUpdatedAt)
-		    	if res1 == nil && res2 == nil {
+				i.CreatedAt = newCreatedAt
+				i.UpdatedAt = newUpdatedAt
+				result := tx.Save(&i)
+		    	if result.RowsAffected > 0 {
 		    		fmt.Printf("\n\nSAVED!")
 		    	}  else {
-		    		fmt.Printf("\n ERROR IN PARSING DATE ---> %v\n\n",res1.Error.Error())
+		    		fmt.Printf("\n ERROR IN PARSING DATE ---> " + result.Error.Error())
 		    	}
 			}
 	} else {
