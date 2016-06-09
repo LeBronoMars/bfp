@@ -23,6 +23,8 @@ func (i *Incident) BeforeCreate() (err error) {
 	if err1 == nil && err2 == nil {
 		i.CreatedAt = newCreatedAt
 		i.UpdatedAt = newUpdatedAt
+	} else {
+		fmt.Printf("\nERROR IN PARSING ---> %v\n\n",err1)
 	}
 	return
 }
