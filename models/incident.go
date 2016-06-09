@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"time"
+	"fmt"
+)
 
 type Incident struct {
 	BaseModel
@@ -11,11 +14,15 @@ type Incident struct {
 }
 
 func (i *Incident) BeforeCreate() (err error) {
+	fmt.Printf("\nBEFORE PARSE --> %v",i.CreatedAt.String())
 	loc,_ := time.LoadLocation("Asia/Manila")
-	newCreatedAt,_ := time.ParseInLocation(time.RFC3339,i.CreatedAt.String(),loc)
-	newUpdatedAt,_ := time.ParseInLocation(time.RFC3339,i.UpdatedAt.String(),loc)
+	newCreatedAt,err1 := time.ParseInLocation(time.RFC3339,i.CreatedAt.String(),loc)
+	newUpdatedAt,err2 := time.ParseInLocation(time.RFC3339,i.UpdatedAt.String(),loc)
 
-	i.CreatedAt = newCreatedAt
-	i.UpdatedAt = newUpdatedAt
+	fmt.Printf("\nAFTER PARSE ---> %v\n\n",newCreatedAt)
+	if err1 == nil && err2 == nil {
+		i.CreatedAt = newCreatedAt
+		i.UpdatedAt = newUpdatedAt
+	}
 	return
 }
