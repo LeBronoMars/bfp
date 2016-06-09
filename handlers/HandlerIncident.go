@@ -64,6 +64,9 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 			alarm_level := c.PostForm("alarm_level")
 			reported_by,_ := strconv.Atoi(c.PostForm("reported_by"))
 
+			newIncident.CreatedAt = changeTimeZone()
+			newIncident.UpdatedAt = changeTimeZone()
+
 			handler.db.Create(&newIncident)
 			incident_id := newIncident.Id
 			//create the very first fire status of incident
@@ -71,6 +74,8 @@ func (handler IncidentHandler) Create(c *gin.Context) {
 			fireStatus.IncidentId = incident_id
 			fireStatus.Status = alarm_level
 			fireStatus.ReportedBy = reported_by
+			fireStatus.CreatedAt = changeTimeZone()
+			fireStatus.UpdatedAt = changeTimeZone()
 
 			handler.db.Create(&fireStatus)
 			qryIncident := m.FetchIncidents{}

@@ -50,6 +50,13 @@ func generateJWT(username string) string {
     return tokenString
 }
 
+//change timezone of date
+func changeTimeZone() time.Time {
+	loc,_ := time.LoadLocation("Asia/Manila")
+	newTime,_ := time.ParseInLocation(time.RFC3339,time.Now().Format(time.RFC3339),loc)
+	return newTime
+}
+
 // encrypt string to base64 crypto using AES
 func encrypt(key []byte, text string) string {
 	// key := []byte(keyText)
