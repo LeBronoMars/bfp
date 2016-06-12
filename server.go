@@ -46,6 +46,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	fireStationHandler := h.NewFireStationHandler(db)
 	private.GET("/fire_stations", fireStationHandler.Index)
 	private.POST("/fire_station", fireStationHandler.Create)
+	private.PUT("/fire_stations/:station_id", fireStationHandler.Update)
 
 	var port = os.Getenv("PORT")
 	if port == "" {
