@@ -42,6 +42,11 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	private.POST("/fire_status", fireStatusHandler.Create)
 	private.PUT("/fire_status/update/:id", fireStatusHandler.Update)
 
+	//manage fire stations
+	fireStationHandler := h.NewFireStationHandler(db)
+	private.GET("/fire_stations", fireStationHandler.Index)
+	private.POST("/fire_station", fireStationHandler.Create)
+
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "9000"
@@ -63,7 +68,7 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	_db.LogMode(true)
-	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.Incident{},&m.FireStatus{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.Incident{},&m.FireStatus{},&m.FireStation{})
 	_db.Set("gorm:table_options", "ENGINE=InnoDB")
 	return _db
 }
