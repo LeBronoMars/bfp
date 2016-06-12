@@ -9,7 +9,8 @@ type AuthenticatedUser struct {
 	Status string `json:"status"`
 	Userrole string `json:"user_role"`
 	Userlevel string `json:"user_level"`
-	Username string `json:"username"`
+	Email string `json:"email"`
+	IsPasswordDefault bool `json:"is_password_default"`
 	DateCreated time.Time `json:"date_created"`
 	DateUpdated time.Time `json:"date_updated"`
 	Token string `json:"token"`

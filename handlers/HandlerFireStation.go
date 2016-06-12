@@ -31,17 +31,21 @@ func (handler FireStationHandler) Create(c *gin.Context) {
 	if IsTokenValid(c) {
 		var newFireStation m.FireStation
 		fs := m.FireStation{}
-		c.Bind(&newFireStation)
-		query := handler.db.Where("station_code = ? AND station_name = ?",newFireStation.StationCode,newFireStation.StationName).First(&fs)
-		if query.RowsAffected > 0 {
-			respond(http.StatusBadRequest,"Fire station already existing",c,true)
-		} else {
-			result := handler.db.Create(&newFireStation)
-			if result.RowsAffected > 0 {
-				c.JSON(http.StatusCreated,newFireStation)
+		err := c.Bind(&newFireStation)
+		if err == nil {
+			query := handler.db.Where("station_code = ? AND station_name = ?",newFireStation.StationCode,newFireStation.StationName).First(&fs)
+			if query.RowsAffected > 0 {
+				respond(http.StatusBadRequest,"Fire station already existing",c,true)
 			} else {
-				respond(http.StatusBadRequest,result.Error.Error(),c,true)
+				result := handler.db.Create(&newFireStation)
+				if result.RowsAffected > 0 {
+					c.JSON(http.StatusCreated,newFireStation)
+				} else {
+					respond(http.StatusBadRequest,result.Error.Error(),c,true)
+				}
 			}
+		} else {
+			respond(http.StatusBadRequest,err.Error(),c,true)
 		}
 	} else {
 		respond(http.StatusUnauthorized,"Sorry, but your session has expired!",c,true)	

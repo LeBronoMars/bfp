@@ -28,7 +28,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	//manage users
 	userHandler := h.NewUserHandler(db)
 	private.GET("/users", userHandler.Index)
-	public.POST("/users", userHandler.Create)
+	public.POST("/user", userHandler.Create)
 	public.POST("/login", userHandler.Auth)
 
 	//manage incidents
@@ -69,7 +69,7 @@ func InitDB() *gorm.DB {
 	}
 	_db.DB()
 	_db.LogMode(true)
-	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.Incident{},&m.FireStatus{},&m.FireStation{})
+	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.Incident{},&m.FireStatus{},&m.FireStation{})
 	_db.Set("gorm:table_options", "ENGINE=InnoDB")
 	return _db
 }
