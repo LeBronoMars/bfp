@@ -16,6 +16,38 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `fire_stations`
+--
+
+DROP TABLE IF EXISTS `fire_stations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `fire_stations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `station_name` varchar(255) DEFAULT NULL,
+  `station_code` varchar(255) DEFAULT NULL,
+  `latitude` double DEFAULT NULL,
+  `longitude` double DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `contact_no` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fire_stations`
+--
+
+LOCK TABLES `fire_stations` WRITE;
+/*!40000 ALTER TABLE `fire_stations` DISABLE KEYS */;
+INSERT INTO `fire_stations` VALUES (1,'2016-06-12 01:33:42','2016-06-12 01:40:14','Caloocan City Fire Station','caloocan001',14.72035,121.004435,'Caloocan City, Metro Manila','632 324-6527','Not available');
+/*!40000 ALTER TABLE `fire_stations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `fire_statuses`
 --
 
@@ -30,7 +62,7 @@ CREATE TABLE `fire_statuses` (
   `status` varchar(255) DEFAULT NULL,
   `reported_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,6 +71,7 @@ CREATE TABLE `fire_statuses` (
 
 LOCK TABLES `fire_statuses` WRITE;
 /*!40000 ALTER TABLE `fire_statuses` DISABLE KEYS */;
+INSERT INTO `fire_statuses` VALUES (18,'2016-06-09 11:52:50','2016-06-09 11:52:50',6,'1st alarm',1),(19,'2016-06-12 02:11:58','2016-06-12 02:11:58',8,'1st Level',1);
 /*!40000 ALTER TABLE `fire_statuses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,7 +91,7 @@ CREATE TABLE `incidents` (
   `address` varchar(255) DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,6 +100,7 @@ CREATE TABLE `incidents` (
 
 LOCK TABLES `incidents` WRITE;
 /*!40000 ALTER TABLE `incidents` DISABLE KEYS */;
+INSERT INTO `incidents` VALUES (6,'2016-06-09 11:52:50','2016-06-09 11:52:50',14.592120170593262,121.05896759033203,'Robinsons Galleria',''),(8,'2016-06-12 02:11:58','2016-06-12 02:11:58',18.4655394,-66.1057355,'San Juan, Puerto Rico','1st Level');
 /*!40000 ALTER TABLE `incidents` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,15 +137,17 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(150) NOT NULL,
-  `last_name` varchar(150) NOT NULL,
-  `status` varchar(20) NOT NULL,
-  `userRole` varchar(20) NOT NULL,
-  `accountLevel` varchar(20) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `date_created` datetime DEFAULT NULL,
-  `date_updated` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `contact_no` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `userrole` varchar(255) DEFAULT NULL,
+  `userlevel` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `is_password_default` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -122,7 +158,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'ned','flanders','active','NHR','superadmin','nedflanders','95fSO5ytE0XqkJgBWh_JOjkjcTh-CABp','2016-05-09 18:01:01','2016-05-09 18:01:01'),(2,'russel','bulanon','active','NHR','superadmin','rsbulanon','bD0HTHZZyIZLrCJyCAmkkTa9umEc56j9','2016-05-09 18:57:12','2016-05-09 18:57:12');
+INSERT INTO `users` VALUES (1,'2016-06-12 04:32:08','2016-06-12 04:32:08','Ned','Flanders','nedflanders@gmail.com','09274502976','active','admin','NHR','24HwWlvRAbv2Aq-GaCS-pdQVTQ==',1),(2,'2016-06-14 12:33:24','2016-06-14 12:33:24','Russel','Bulanon','rsbulanon@gmail.com','09321622825','active','admin','NHR','DRREzCkmKH7vvcRKhzKscwI3KA==',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,7 +175,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `qry_incidents` AS select `i`.`id` AS `incident_id`,`i`.`created_at` AS `date_reported`,`i`.`latitude` AS `latitude`,`i`.`longitude` AS `longitude`,`i`.`address` AS `address`,`i`.`remarks` AS `remarks`,`f`.`id` AS `fire_status_id`,`f`.`created_at` AS `fire_status_reported`,`f`.`status` AS `fire_status`,`u`.`id` AS `reporter_id`,`u`.`first_name` AS `reporter_first_name`,`u`.`last_name` AS `reporter_last_name`,`u`.`userRole` AS `reporter_role` from ((`fire_statuses` `f` join `incidents` `i` on((`i`.`id` = `f`.`incident_id`))) join `users` `u` on((`f`.`reported_by` = `u`.`id`))) */;
+/*!50001 VIEW `qry_incidents` AS select `i`.`id` AS `incident_id`,`i`.`created_at` AS `date_reported`,`i`.`latitude` AS `latitude`,`i`.`longitude` AS `longitude`,`i`.`address` AS `address`,`i`.`remarks` AS `remarks`,`f`.`id` AS `fire_status_id`,`f`.`created_at` AS `fire_status_reported`,`f`.`status` AS `fire_status`,`u`.`id` AS `reporter_id`,`u`.`first_name` AS `reporter_first_name`,`u`.`last_name` AS `reporter_last_name`,`u`.`userrole` AS `reporter_role` from ((`fire_statuses` `f` join `incidents` `i` on((`i`.`id` = `f`.`incident_id`))) join `users` `u` on((`f`.`reported_by` = `u`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -153,4 +189,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-06-02  9:41:43
+-- Dump completed on 2016-06-14 20:46:46
