@@ -20,7 +20,10 @@ func NewUserHandler(db *gorm.DB) *UserHandler {
 
 //get all users
 func (handler UserHandler) Index(c *gin.Context) {
-	
+	users := []m.User{}
+	handler.db.Find(&users)
+	c.JSON(http.StatusOK,users)
+	return
 }
 
 //create new user
@@ -35,19 +38,7 @@ func (handler UserHandler) Create(c *gin.Context) {
 				user.Password = encryptedPassword
 				result := handler.db.Create(&user)
 				if result.RowsAffected > 0 {
-					authenticatedUser := m.AuthenticatedUser{}
-					authenticatedUser.Id = user.Id
-					authenticatedUser.FirstName = user.FirstName
-					authenticatedUser.LastName = user.LastName
-					authenticatedUser.Status = user.Status
-					authenticatedUser.Email = user.Email
-					authenticatedUser.IsPasswordDefault = user.IsPasswordDefault
-					authenticatedUser.Userrole = user.Userrole
-					authenticatedUser.Userlevel = user.Userlevel
-					authenticatedUser.DateCreated = user.CreatedAt
-					authenticatedUser.DateUpdated = user.UpdatedAt
-					authenticatedUser.Token = generateJWT(user.Email)
-					c.JSON(http.StatusCreated, authenticatedUser)
+					c.JSON(http.StatusCreated, user)
 				} else {
 					respond(http.StatusBadRequest,result.Error.Error(),c,true)
 				}

@@ -9,7 +9,7 @@ type User struct {
 	Status string `json:"status"`
 	Userrole string `json:"user_role" form:"user_role" binding:"required"`
 	Userlevel string `json:"user_level" form:"user_level" binding:"required"`
-	Password string `json:"password"`
+	Password string `json:"-"`
 	IsPasswordDefault bool `json:"is_password_default"`
 }
 
