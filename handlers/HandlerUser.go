@@ -102,19 +102,25 @@ func (handler UserHandler) Auth(c *gin.Context) {
 func (handler UserHandler) ChangePassword (c *gin.Context) {
 	if IsTokenValid(c) {
 		email := c.PostForm("email")
+		oldPassword := c.PostForm("old_password")
 		newPassword := c.PostForm("new_password")
 		user := m.User{}
 		query := handler.db.Where("email = ?",email).Find(&user)
 		
 		if query.RowsAffected > 0 {
-			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
-			user.Password = encryptedPassword
-			user.IsPasswordDefault = false
-			result := handler.db.Save(&user)
-			if result.RowsAffected > 0 {
-				c.JSON(http.StatusOK,"Password successfully changed!")
+			decryptedPassword := decrypt([]byte(config.GetString("CRYPT_KEY")), user.Password)
+			if decryptedPassword == old_password {
+	 			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
+				user.Password = encryptedPassword
+				user.IsPasswordDefault = false
+				result := handler.db.Save(&user)
+				if result.RowsAffected > 0 {
+					c.JSON(http.StatusOK,"Password successfully changed!")
+				} else {
+					respond(http.StatusBadRequest,"Unable to change password",c,true)
+				}
 			} else {
-				respond(http.StatusBadRequest,"Unable to change password",c,true)
+				respond(http.StatusBadRequest,"Invalid old password",c,true)
 			}
 		} else {
 			respond(http.StatusBadRequest,"User not found!",c,true)
