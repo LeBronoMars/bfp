@@ -109,6 +109,7 @@ func (handler UserHandler) ChangePassword (c *gin.Context) {
 		if query.RowsAffected > 0 {
 			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
 			user.Password = encryptedPassword
+			user.IsPasswordDefault = false
 			result := handler.db.Save(&user)
 			if result.RowsAffected > 0 {
 				c.JSON(http.StatusOK,"Password successfully changed!")
