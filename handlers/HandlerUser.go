@@ -109,7 +109,7 @@ func (handler UserHandler) ChangePassword (c *gin.Context) {
 		
 		if query.RowsAffected > 0 {
 			decryptedPassword := decrypt([]byte(config.GetString("CRYPT_KEY")), user.Password)
-			if decryptedPassword == old_password {
+			if decryptedPassword == oldPassword {
 	 			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
 				user.Password = encryptedPassword
 				user.IsPasswordDefault = false
