@@ -98,3 +98,28 @@ func (handler UserHandler) Auth(c *gin.Context) {
 		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
 	}
 }
+
+func (handler UserHandler) ChangePassword (c *gin.Context) {
+	if IsTokenValid(c) {
+		email := c.PostForm("email")
+		newPassword := c.PostForm("new_password")
+		user := m.User{}
+		query := handler.db.Where("email = ?",email).Find(&user)
+		
+		if query.RowsAffected > 0 {
+			encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), newPassword)
+			user.Password = encryptedPassword
+			result := handler.db.Save(&user)
+			if result.RowsAffected > 0 {
+				c.JSON(http.StatusOK,"Password successfully changed!")
+			} else {
+				respond(http.StatusBadRequest,"Unable to change password",c,true)
+			}
+		} else {
+			respond(http.StatusBadRequest,"User not found!",c,true)
+		}
+	} else {
+		respond(http.StatusBadRequest,"Sorry, but your session has expired!",c,true)	
+	}
+	return
+}

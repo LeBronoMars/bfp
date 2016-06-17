@@ -30,6 +30,7 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	private.GET("/users", userHandler.Index)
 	public.POST("/user", userHandler.Create)
 	public.POST("/login", userHandler.Auth)
+	private.POST("/change_password", userHandler.ChangePassword)
 
 	//manage incidents
 	incidentHandler := h.NewIncidentHandler(db)
