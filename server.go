@@ -72,7 +72,7 @@ func InitDB() *gorm.DB {
 	_db.LogMode(true)
 	_db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&m.User{},&m.Incident{},&m.FireStatus{},&m.FireStation{})
 	_db.Set("gorm:table_options", "ENGINE=InnoDB")
-	return _db
+	return &_db
 }
 
 func GetPort() string {
