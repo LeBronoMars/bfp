@@ -11,7 +11,7 @@ import (
 	m "bfp/avi/api/models"
 	"bfp/avi/api/config"
 	"github.com/jinzhu/gorm"
-	"github.com/gin-gonic/contrib/jwt"
+	"github.com/dgrijalva/jwt-go"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	private := r.Group("/api/v1")
 	public := r.Group("/api/v1")
-	private.Use(jwt.Auth(config.GetString("TOKEN_KEY")))
+	private.Use(Auth(config.GetString("TOKEN_KEY")))
 
 	//manage users
 	userHandler := h.NewUserHandler(db)
@@ -55,6 +55,21 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	}
 	fmt.Println("PORT ---> ",port)
 	r.Run(fmt.Sprintf(":%s", port))
+}
+
+func Auth(secret string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.Request.Header.Get("Authorization")
+		fmt.Printf("TOKEN FROM HEADE ---> %v",tokenString)
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		    return []byte(config.GetString("TOKEN_KEY")), nil
+		})
+
+		if !token.Valid {
+		    c.AbortWithError(401, err)
+		} 
+	}
 }
 
 func InitDB() *gorm.DB {

@@ -13,7 +13,7 @@ import (
 	"bfp/avi/api/config"
 	"gopkg.in/redis.v3"
 	"github.com/gin-gonic/gin"
-	jwt_lib "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 )
 
 func respond(statusCode int, responseMessage string, c *gin.Context, isError bool) {
@@ -41,12 +41,19 @@ type Response struct {
 //generate JWT
 func generateJWT(username string) string {
 	// Create the token
-	token := jwt_lib.New(jwt_lib.GetSigningMethod("HS256"))
+	//token := jwt_lib.New(jwt_lib.GetSigningMethod("HS256"))
 	// Set some claims
-	token.Claims["ID"] = username
-	token.Claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	//token.Claims["ID"] = username
+	//token.Claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	// Sign and get the complete encoded token as a string
-	tokenString, _ := token.SignedString([]byte(config.GetString("TOKEN_KEY")))
+	//tokenString, _ := token.SignedString([]byte(config.GetString("TOKEN_KEY")))
+	mySigningKey := []byte(config.GetString("TOKEN_KEY"))
+    claims := &jwt.StandardClaims{
+    	ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+    	Issuer:    username,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString,_ := token.SignedString(mySigningKey)
     return tokenString
 }
 
