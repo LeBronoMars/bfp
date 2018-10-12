@@ -9,12 +9,15 @@ import (
     "crypto/cipher"
     "crypto/rand"
     "encoding/base64"
+    "strings"
 
 	"bfp/avi/api/config"
 	"gopkg.in/redis.v3"
 	"github.com/gin-gonic/gin"
 	"github.com/dgrijalva/jwt-go"
 )
+
+var USER_ROLES = []string{"SUPER_ADMIN", "ADMIN", "USER"}
 
 func respond(statusCode int, responseMessage string, c *gin.Context, isError bool) {
 	response := &Response{Message: responseMessage}
@@ -55,6 +58,27 @@ func generateJWT(username string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString,_ := token.SignedString(mySigningKey)
     return tokenString
+}
+
+// get current user based on token
+func getEmailFromSession(c *gin.Context) string {
+	var email = ""
+	tokenString := c.Request.Header.Get("Authorization")
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	    return []byte(config.GetString("TOKEN_KEY")), nil
+	})
+
+	if err != nil || !token.Valid {
+		response := &Response{Message: err.Error()}
+		c.JSON(http.StatusUnauthorized, response)
+		c.Abort()
+	} else {
+		claims, _ := token.Claims.(jwt.MapClaims)
+		email = fmt.Sprintf("%s", claims["iss"])
+	}
+	return email;
 }
 
 //change timezone of date
@@ -147,4 +171,13 @@ func IsTokenValid(c *gin.Context) bool {
 		return false
 	}
 	return true
+}
+
+func contains(s []string, e string) bool {
+    for _, a := range s {
+        if a == e {
+            return true
+        }
+    }
+    return false
 }

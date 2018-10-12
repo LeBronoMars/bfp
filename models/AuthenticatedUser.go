@@ -7,8 +7,8 @@ type AuthenticatedUser struct {
 	FirstName  string `json:"first_name"`
 	LastName  string `json:"last_name"`	
 	Status string `json:"status"`
-	Userrole string `json:"user_role"`
-	Userlevel string `json:"user_level"`
+	UserRole string `json:"user_role"`
+	UserLevel string `json:"user_level"`
 	Email string `json:"email"`
 	IsPasswordDefault bool `json:"is_password_default"`
 	DateCreated time.Time `json:"date_created"`

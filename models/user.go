@@ -7,10 +7,11 @@ type User struct {
 	Email string `json:"email" form:"email" binding:"required"`
 	ContactNo string `json:"contact_no" form:"contact_no" binding:"required"`
 	Status string `json:"status"`
-	Userrole string `json:"user_role" form:"user_role" binding:"required"`
-	Userlevel string `json:"user_level" form:"user_level" binding:"required"`
+	UserRole string `json:"user_role" form:"user_role" binding:"required"`
+	UserLevel string `json:"user_level" form:"user_level" binding:"required"`
 	Password string `json:"-"`
 	IsPasswordDefault bool `json:"is_password_default"`
+	StationId int `json:"station_id" form:"station_id"`
 }
 
 func (u *User) BeforeCreate() (err error) {
