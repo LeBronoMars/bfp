@@ -79,6 +79,12 @@ func LoadAPIRoutes(r *gin.Engine, db *gorm.DB) {
 	private.POST("/regional-office", regionalOfficeHandler.Create)
 	private.PUT("/regional-offices/:id", regionalOfficeHandler.Update)
 
+	// comand center
+	commandCenterHandler := h.NewCommandCenterHandler(db)
+	private.GET("/command-centers", commandCenterHandler.Index)
+	private.POST("/command-center", commandCenterHandler.Create)
+	private.PUT("/command-centers/:id", commandCenterHandler.Update)
+
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -144,6 +150,7 @@ func InitDB() *gorm.DB {
 																&m.FireStatus{},
 																&m.FireStation{},
 																&m.RegionalOffice{},
+																&m.CommandCenter{},
 																&m.Status{})
 	_db.Set("gorm:table_options", "ENGINE=InnoDB")
 	return _db

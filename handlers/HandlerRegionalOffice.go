@@ -79,7 +79,7 @@ func (handler RegionalOfficeHandler) Update(c *gin.Context) {
 	if qry.RowsAffected > 0 {
 
 		if (len(c.PostForm("name")) == 0) {
-			respond(http.StatusUnprocessableEntity, "Nothing to update, no paramter provided.", c, true)	
+			respond(http.StatusUnprocessableEntity, "Nothing to update, no parameter provided.", c, true)	
 		} else {
 			// check if regional office name is available
 			if (len(c.PostForm("name")) > 0) {

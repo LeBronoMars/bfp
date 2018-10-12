@@ -82,7 +82,7 @@ func (handler StatusHandler) Update(c *gin.Context) {
 	if qry.RowsAffected > 0 {
 
 		if (len(c.PostForm("status_name")) == 0 && len(c.PostForm("status_color")) == 0) {
-			respond(http.StatusUnprocessableEntity, "Nothing to update, no paramters provided.", c, true)	
+			respond(http.StatusUnprocessableEntity, "Nothing to update, no parameters provided.", c, true)	
 		} else {
 			// check if status color is available
 			if (len(c.PostForm("status_name")) > 0) {
