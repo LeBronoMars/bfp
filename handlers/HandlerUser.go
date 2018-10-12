@@ -73,34 +73,27 @@ func (handler UserHandler) Create(c *gin.Context) {
 		if handler.db.Where("email = ?",user.Email).First(&existingUser).RowsAffected < 1 {
 			if (contains(USER_ROLES, user.UserRole)) {
 
-				station_id := user.StationId
-				fs := m.FireStation{}
+				encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), "123")
+				user.Password = encryptedPassword
+				result := handler.db.Create(&user)
 
-				if handler.db.Where("id = ? ",station_id).First(&fs).RowsAffected > 0 {
-					encryptedPassword := encrypt([]byte(config.GetString("CRYPT_KEY")), "123")
-					user.Password = encryptedPassword
-					result := handler.db.Create(&user)
-
-					if result.RowsAffected > 0 {
-						//authentication successful
-						authenticatedUser := m.AuthenticatedUser{}
-						authenticatedUser.Id = user.Id
-						authenticatedUser.FirstName = user.FirstName
-						authenticatedUser.LastName = user.LastName
-						authenticatedUser.Status = user.Status
-						authenticatedUser.Email = user.Email
-						authenticatedUser.IsPasswordDefault = user.IsPasswordDefault
-						authenticatedUser.UserRole = user.UserRole
-						authenticatedUser.UserLevel = user.UserLevel
-						authenticatedUser.DateCreated = user.CreatedAt
-						authenticatedUser.DateUpdated = user.UpdatedAt
-						authenticatedUser.Token = generateJWT(user.Email)
-						c.JSON(http.StatusCreated, authenticatedUser)
-					} else {
-						respond(http.StatusBadRequest,result.Error.Error(),c,true)
-					}
+				if result.RowsAffected > 0 {
+					//authentication successful
+					authenticatedUser := m.AuthenticatedUser{}
+					authenticatedUser.Id = user.Id
+					authenticatedUser.FirstName = user.FirstName
+					authenticatedUser.LastName = user.LastName
+					authenticatedUser.Status = user.Status
+					authenticatedUser.Email = user.Email
+					authenticatedUser.IsPasswordDefault = user.IsPasswordDefault
+					authenticatedUser.UserRole = user.UserRole
+					authenticatedUser.UserLevel = user.UserLevel
+					authenticatedUser.DateCreated = user.CreatedAt
+					authenticatedUser.DateUpdated = user.UpdatedAt
+					authenticatedUser.Token = generateJWT(user.Email)
+					c.JSON(http.StatusCreated, authenticatedUser)
 				} else {
-					respond(http.StatusNotFound, "Fire station not found!",c,true)
+					respond(http.StatusBadRequest,result.Error.Error(),c,true)
 				}
 			} else {
 				respond(http.StatusUnprocessableEntity, "Invalid user role. User role must be one of the following SUPER_ADMIN, ADMIN, or USER",c,true)
